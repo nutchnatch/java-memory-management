@@ -1,0 +1,72 @@
+JVM - bytecode
+	- Main.java -> javac -> Main.class
+	- JVM is interpreting the bytecode in runtime
+		- write code once and run it everywhere in any machine, any OS
+		- jvm do other optimizations when reading bytecode
+		- many languages can be run by jvm (java, kotlin, scala, groovy)
+		- jvm write instructions that machine can directly execute
+
+		+ just in time compilation (jit) - to be used because of the slowness of interpreted language
+			- it looks up for the most frequently part of the program
+			- if a method is used a lot, this method execution will be speed up
+			- this part will be run as native (directly read by OS), rather than interpreted one
+				+ native mac code is different from windows native code and not compatible
+				+ the code runs faster, the longer it is left to run
+					* because jvm can profile the code anf choose what can be run natively
+					ex: a method that runs every minute will be jit
+						while code that runs once a day, will not jit compiled
+			- process compiling code to native machine code is run in a separate thread
+			- jvm is a multuthread application itself
+			- threads dedicated to interpret bytecode are not affected by jit compilition
+			- any sequence of bytecode can be compiled to native code
+
+			- which version of the code run faster?
+				+ there is a flag that can be used fpr that:
+					+ should be passed as an option after java command
+					-XX:+PrintCompilation (xx-advanced configuration; + or - to switch an option on or off)
+						output:
+							137(millisec)    1(order)     n(native)  0 (type of conpilation)      java.lang.System::arraycopy (line of code executed)   (static)
+							142   31 % (put in code cache)           4 (type of conpilation)      PrimeNumbers::isPrime @ 2 (35 bytes)
+
+							s (syncronized); % (natively compiled, most optimal possible way); !(exception going on)
+							(type of conpilation): 
+								0 -  no compulation, code only interpreted
+								1-4 - progressevely deeper level of compilation
+
+Compilers:
+	- ther are 2 compilers builtin in jvm called C1, C2
+		+ C1 - do first 3 level of compilation
+		+ C2 - do 4th level of compilation
+		- code profiling: choice is made on how many time a piece of code is run and how complexe it is
+							most complex and most run are put in code cache in order to be accessed easily
+		- to save the output to a file, add the following options:
+			-XX:+UnlockDiagnosticVMOptions -XX:+
+			-> this file will be generated: hotspot_pid14939.log
+
+How to improve performance:
+	- In C4 level, code are out in code cache, which have a limit in size
+	-  some methods must be removed, so other can be inserted
+	- so, we can increase the code cache to increase app performance
+	- in such cases, this warning appears:
+		VM warning: CodeCache is full. Compiler has been disabled
+		(means tha all code cache is being used and cannot be cleaned up)
+	- to see what is the code cache size, use the following option:
+		-XX:+PrintCodeCache
+		output -> CodeCache: size=245760Kb used=1232Kb max_used=1244Kb free=244527Kb
+		+ maximum size depends on java version:
+			- java 7 or bellow - 32MB (32 bit JVM) or 48MB (64 bit JVM)
+			- java 8 - 240MB (64 bit JVM)
+	- chance code cache size:
+		+ InitialCodeCacheSize - depends on memory (160MB)
+		+ ReservedCodeCacheSize - maximum size (..MB)
+		+ CodeCacheExpansionSize - how quickly should ot grow
+		ex: 
+			output -> CodeCache: size=28672Kb used=1122Kb max_used=1133Kb free=27550Kb
+
+	- remotely monitoring the code cache with JConsole
+		+ in mac os, can be found in:
+		+ on windows, dir ../AppData/Local/Temp/hesperfdata must be given write permitions
+		+ run jsonsole
+		+ select intelij proccess
+		+ go to memory tab and select CodeCache
+		+ attention that jconsole will use roughtly 2MB of your codecache while monitoring the application
