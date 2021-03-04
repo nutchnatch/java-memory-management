@@ -12,7 +12,7 @@ JVM - bytecode
 			- this part will be run as native (directly read by OS), rather than interpreted one
 				+ native mac code is different from windows native code and not compatible
 				+ the code runs faster, the longer it is left to run
-					* because jvm can profile the code anf choose what can be run natively
+					* because jvm can profile the code and choose what can be run natively
 					ex: a method that runs every minute will be jit
 						while code that runs once a day, will not jit compiled
 			- process compiling code to native machine code is run in a separate thread
@@ -30,11 +30,11 @@ JVM - bytecode
 
 							s (syncronized); % (natively compiled, most optimal possible way); !(exception going on)
 							(type of conpilation): 
-								0 -  no compulation, code only interpreted
+								0 -  no compilation, code only interpreted
 								1-4 - progressevely deeper level of compilation
 
 Compilers:
-	- ther are 2 compilers builtin in jvm called C1, C2
+	- there are 2 compilers builtin in jvm called C1, C2
 		+ C1 - do first 3 level of compilation
 		+ C2 - do 4th level of compilation
 		- code profiling: choice is made on how many time a piece of code is run and how complexe it is
@@ -59,12 +59,13 @@ How to improve performance:
 	- chance code cache size:
 		+ InitialCodeCacheSize - depends on memory (160MB)
 		+ ReservedCodeCacheSize - maximum size (..MB)
-		+ CodeCacheExpansionSize - how quickly should ot grow
+		+ CodeCacheExpansionSize - how quickly should it grow
 		ex: 
+			-XX:ReservedCodeCacheSize=28m -XX:+PrintCodeCache
 			output -> CodeCache: size=28672Kb used=1122Kb max_used=1133Kb free=27550Kb
 
 	- remotely monitoring the code cache with JConsole
-		+ in mac os, can be found in:
+		+ in mac os, can be found in: /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin
 		+ on windows, dir ../AppData/Local/Temp/hesperfdata must be given write permitions
 		+ run jsonsole
 		+ select intelij proccess

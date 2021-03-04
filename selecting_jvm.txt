@@ -1,0 +1,60 @@
+	* JVM Jit compiler
+		+ C1 (Native level 1, 2, 3)
+		+ C2 (Native level 4)
+
+	Difference between 32 and 64 bit JVM
+		- if heap size < 3GB
+			+ 32 bit size JVM willl be faster, because each pointer in the memory will be smaller
+		- for a 32 bit JVM, the total memory required for the application, must not exceed 4GB
+		- if application  uses a lot of longs / doubles , 64 bit JVM is faster
+		- for small application, 32 bit is better than 64 bit JVM
+		- maximum heap size in 64 bit JVM, is determined by OS, on windows is about 1.2GB
+		- for 32 bit JVM, only C1 compiler is available
+		- for 64 bit JVM, both C1 and C2 compilers are availables
+		- C1 compiler is called Client compiler - applications whith short life, run a process and then finishes
+			- short lived application start time is important (as quick as possible, because it will not run for very long)
+		- C2 compiler is called server compiler - application that runs for a long time, such a web server
+			- long lived application start time is less important 
+		- so 32 bit JVM may perform better
+
+		- If we are forced to use 64 bit JVM, we can specify a flag to dictate which compiler is used at runtime
+			- for example, in a low memory requirement application, we can run ir only with client compile, which can help on start time.
+			- this flag to activate only client compiler is "-client" zs an option when running a java application
+				+ int this case, less analisys of the code takes place up front
+				+ ex: -XX:+PrintCompilation -client
+			- as an alternative to "-client", we can use two other flags
+				+ "-server" selects 32 bits server client
+				+ "-d64" selects the 64 bit server compiler
+				* for most OS, this is just theory and does not work as we expect
+				* on OS like windows and linux, if you are running a 32 bit OS system, then you can choose "-client" and "-server" flags
+					- in this case, using "-64" would give an error, but if you are running a 64 bit  OS, you allways get 64 bit server, whichever flag you choose. Anyway we can experiment it, just to see if we get improvements
+				* flag -XX:-TieredCompilation -> allows you to turn off tiered compilation to tell the JVM to run in interpreted	mode only
+					- this could be an option for an application that fire up a single statement then close down again, could be quicker if using this flag
+					- in general, it is not something we would want to use
+
+	Native Compilation Tuning
+		+ Number of threads
+			* the default number of threads that will be using for compiling depends on the number of CPUs in your computer 
+				- to find the default for your computer:
+					$ java -XX:+PrintFlagsFinal
+						+ for example, one of the shown value is:  CICompilerCount = 3	
+							-> it means the are 3 threads for compiling the code
+				- to find information for a specific flag
+					-> first, get the Java process ID
+						$ jps
+						44161 Launcher
+						17715 
+						48426 Jps
+						* this tell us of any application running in this computor
+					$ jinfo -flag CICompilerCount 44161
+						- the result is: 
+					* we can use the following option in order to improve compilation time:
+						-XX:CICompilerCount=6
+					* the minimum number of threads is 2 (one for the client compiler, one for the server compiler)
+		+ Threashold - the number of times a method needs to run before it is natively compiled
+			* this can be done with -XX:CompileThreasold=n
+			* its default value is
+				$ jinfo -flag CompileThreshold 17715
+				result: -XX:CompileThreshold=10000
+			* we can use another value, to run our application, for example: -XX:CompileThreshold=1000, and see what are the improvements
+			* this is an improvement that may be important for apploications that run the same method over and over again

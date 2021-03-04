@@ -1,0 +1,14 @@
+Difference between 32 and 64 bit JVM
+	- if heap size < 3GB
+		+ 32 bit size JVM willl be faster, because each pointer in the memory will be smaller
+	- for a 32 bit JVM, the total memory required for the application, must not exceed 4GB
+	- if application  uses a lot of longs / doubles , 64 bit JVM is faster
+	- for small application, 32 bit is better than 64 bit JVM
+	- maximum heap size in 64 bit JVM, is determined by OS, on windows is about 1.2GB
+	- for 32 bit JVM, only C1 compiler is available
+	- for 64 bit JVM, both C1 and C2 compilers are availables
+	- C1 compiler is called Client compiler - applications whith short life, run a process and then finishes
+		- short lived application start time is important (as quick as possible, because it will not run for very long)
+	- C2 compiler is called server compiler - application that runs for a long time, such a web server
+		- long lived application start time is less important 
+	- so 32 bit JVM may perform better
