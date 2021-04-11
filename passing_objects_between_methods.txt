@@ -1,0 +1,45 @@
+Passing variables by value:
+	* when I pass a variable to a method, it is allways done by copying that variable (only for primitive types, not objects)
+	* the original variable keeps its original value, even if the copied variable is changed
+	* when an object is passed to a method, it is a variable that contains the reference to that object	
+		- that is a pointer which is copied across
+		- a copy of the varible on the stack, containing the reference to the object, is what is passed
+		- this is called reference by value
+		- in this case, a copy of the pointer is created, the object itself is not copied
+	* * when I pass a variable to a method, it is allways done by copying that variable (only for primitive types, not objects)
+
+Final keyword
+	* variables, methods and classes can be defined as final
+		+ final variables cannot be changed, but it must be assinged once
+		+ final methods cannot be overrided by subclasses
+		+ final classes cannot be subclassed
+			$ final Customer c = new Customer("John");
+	* from performance perspective, its use can be seen as a good thing
+		* in theroy, it allows java compilers to optimize the code
+		* this optimization is called "in-lining"
+			- whenever this variables appears, instead of refencing the variable, the compiler uses its final value directly
+				$ final int b = 7;
+				-> compiler will use directly 7, instead of using reference to variable b 
+		* when the variable in the stack is assigned to an object in the heap, then we cannot change the object in the heap, this variable points to
+			+ final keyword, stops us doing that
+			+ but we can change the parameter within the heap, if we wish
+				- for example, we can change the customer's name
+					$ final Customer c = new Customer("John");
+					$ c.setName = "Susan"; -> it is allowed to do
+						- this will change the variable in the heap 
+			+ in java, it is not possible to make an object completely unchangeable 
+				+ the concept which will forbid completely an object to be changed is called "const correctness", but it is not allowed in java
+				+ by the way, in java "const" is a reserved keyword that we cannot use
+		* safetyness
+			$ final Customer c = new Customer("John");
+			$ System.out.println(c.getName());
+			$ System.out.println(c.getName());
+			-> is this code safe?
+				 public String getName(){
+				 	String tmp = this.name;
+				 	this.name = "xxx";
+				 	return tmp;
+				 }
+				 -> code above is possible to exist in java, even if the custumer objet was declared as final
+				 -> final keyword, just prevent the reference to be changed, not the real object itself, so it cannot be reassigned, but variables can be canged.
+				 -> a good practice would be to define all parameter in a method to be final, in order to avoid side effects in the method

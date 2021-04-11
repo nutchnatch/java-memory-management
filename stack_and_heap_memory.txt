@@ -1,0 +1,42 @@
+Java Memory
+	+ garbage collection
+		- the process of freeng up available memory by removing items from memory that are no longer needed
+	+ stack
+		- very efficient data structure which is managed effectively by JVM
+		- JavaVM knows exactly when data on the stack can be destroyed
+		- normally there are many stacks
+			* every thread has its own stack 
+			* that in a thread's stack can only be seen by that thread
+		- works as follows:
+			-> we add data to the stack by pushing it on top, each time a new set of items is added
+			-> we can pull or pop data from the top of the stack
+				- we can only remove the last item added
+				- earlier items cannot be removed until they reach the top of the stack - filo (first in, las out)
+			-> each time we call a function, java push variables for that function onto the stack
+			-> variable scoping
+				- when you declare a variable within a code block, it is only visible within that code block
+			-> local variable created on the code block are automaticaly poped out when re reach eht end of that block
+		- stack is great for local variables, because we want those variables to have a short lifetime
+		- stack cannot be used to store complex data types, such as an object
+		- it can only store primitives
+
+	+ heap
+		- memory area where complex objects are stored
+		- heap is all of the data in our application that is'nt stored on one of the stacks
+		- in one application, there is one heap which is shared across all the threads
+		- most objects are quite big and most programs want to pass around objects between blocks of code, 
+			* by placing objects on the heap, that is easy to do
+		- all threads, all code blocks can access the heap
+		- for each object on the heap, there is a pointer to it, which is the variable reference and that is stored on the stack
+		- the heap is a massive amount of data, when compared to the stack
+
+	+ heap & stack
+		- new keyword means: find some free space on the heap, large enough to store this object and then we will reference it from local variable calls myList:
+			$ List<String> myList = new ArrayList<String>();
+
+		- printList(myList)
+			$ public static void printList(List<String> data)
+			-> will pass a copy of myList and create a new local variable, called data (it points to the same object myList in the heap)
+			-> data and myList are two reference variables pointing to the same object in the heap, so any change made on them will reflect on the real last object.
+
+	+ metal space
