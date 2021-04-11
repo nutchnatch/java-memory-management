@@ -1,0 +1,90 @@
+* Encapsulation
+	- control access to the data in a class
+	- wel defined class: data inside th class cannot be accidently changed from outside
+
+	* having a private map in a class:
+	public class CustomerRecords {
+		private Map<String, String> map = new HashMap<>();
+		public Map<String, String> getMap() {
+			return map;
+		}
+	}
+		* this is problematic because I return a reference to my map, and so, everything can be done from outside, including clearing my map
+		* It is almost the same as declaring the map as a public variable
+		* If our map is changed, we don't know where that change is occuring
+		* instead of escaping the pam, it should be encapsulated.
+
+		+ Solutions:
+			- references can be escaped if we have a pointer to an object
+			- here, we have to avoid returning a pointer to our map 
+
+			~ solution1: 
+				+ implement Iterable interface in the class
+					- from outside we have to access the map from the iterator
+					public class CustomerRecords implements Iterable<Customer> {
+
+						public Iterator<Customer> iterator() {
+							return records.values().iterator();
+						}
+					}
+					CustomerRecords records = new CustomerRecords();
+					for(Customer next: records) {
+						System.out.println(next);
+					}
+
+				+ problems with this aproach:
+					- even with the iterator, we can remove items
+					Iterator<Customer> it = records.iterator();
+					it.next();
+					it.remove();
+
+			~ solution2:
+				+ return a copy of the collection
+					public Map<String, Customer> getCustomers() {
+						return new HashMap<String, Customer>(this.records);
+					} 
+					- fixes the problem, howevwer, from outside, we may have the expectation that we are receiving the real object, which may lead to bad interpretation
+					- in this case, we are creating one  more object in the heap memory
+					- jvm will create a pointer, which consumes 4 0r 8 bytes
+					- this copy is garbage collected very quickly, after it stops to be used
+
+			~ solution3:
+				+ return an immutable collection
+					public Map<String, Customer> getCustomers() {
+						return Collections.unmodifiableMap(this.records);
+					}
+					- if we try to change that colletion, we will get an UnsupportedOperationException
+						records.getCustomers().clear();
+					- this is the best way to ensure encapsulation
+
+			~ scnearion:
+				- if we have a finf method:
+					public Customer find(String name) {
+					return records.get(name);
+				}
+				- again, we are escaping a reference and allows other to change my collection
+				- to solve this, we can return a copy of our ov+bject:
+					public Customer find(String name) {
+						return new Customer(this.records.get(name));
+					}
+				- fixes the problem, howevwer, from outside, we may have the expectation that we are receiving the real object, which may lead to bad interpretation
+
+				- other solution:
+					* create an interface:
+						public interface ReadOnlyCustomer {
+
+						    String getName();
+
+						    String toString();
+						}
+
+						public class Customer implements ReadOnlyCustomer {
+							public Customer(ReadOnlyCustomer customer) {
+								this.name = customer.getName();
+							}
+						}
+					* records.find("John").setName("Simon"); does not work any more, since there is no setName() on the returned ReadOnlyCustomer class
+					* we are duplicating the object in memory, but it will be kept for short amount of time, because it will be garbage collected very soon
+
+				~solution for java 11 - using modules to hide the implementation
+					- create a module to export only ReadOnlyCustomer and hiding Customer, so we cannot access it, neither its methods (including setName)
