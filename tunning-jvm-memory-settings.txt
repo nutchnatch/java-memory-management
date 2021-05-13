@@ -1,0 +1,53 @@
+* Stringpool
+	- Implement by using a HashMap
+		+ a standard hashmao starts with 16 buckets, but it grows overtime
+		+ when using the following VM options 
+			-XX:+PrintStringTableStatistics
+			. we see the output that tell us that the hashmap which is being used for the stringpool in java's memory, by default 60013 buckets:
+			Number of buckets       :     60013 =    480104 bytes, avg   8.000
+			. 894 different strings in the stringpool: (created by JVM itself)
+			Number of entries       :       894 =     21456 bytes, avg  24.000
+			. Maximum number of buckets is: 
+			Maximum bucket size     :         2 (because there are a big number of buckets, so it will be efficient)
+
+			- with 10 000 000 stringa, the stringpool, presents the following number of buckets:
+			Average bucket size     :   166.668
+			Variance of bucket size :    55.358
+			Std. dev. of bucket size:     7.440
+			Maximum bucket size     :       196
+
+			Elapsed:40706 ms - very inefficient
+
+				+ which is very inefficient because for each bucket, we have 196 string (it is like a list)
+
+			- to fix this, we can set the number of buckets when our application is starting: (for this, we look for the next prime number after60013, which is 120121)
+				-XX:StringTableSize=120121
+				with this option, Elapsed:21911 ms, half time less than before, and with better distribution of buckets in the application
+				Average bucket size     :   166.668
+				Variance of bucket size :    55.358
+				Std. dev. of bucket size:     7.440
+				Maximum bucket size     :       196
+
+				In this case, we improved performance of our application
+
+		+ Find the size of the heap:
+			-XX:+UnlockDiagnosticVMOptions -XX:+PrintFlagsFinal (in bytes) - those numbers depend in the amout of memory on the machine and the verision of JVM
+			+ we can search for maxheapsize:
+				uintx MaxHeapSize                              := 2147483648                          {product}
+			+ other flag is the initialheapsize:
+				uintx InitialHeapSize                          := 134217728                           {product}
+			+ we can change this value. Usually, it is preferable to change it to a lower value, so we can test the performance of our application:
+				-XX:MaxHeapSize=600m
+				Other syntax will be: -Xmx600m
+				in this case, it will return an OutOfMemoty exception
+					Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
+					at java.lang.Integer.toString(Integer.java:403)
+					at java.lang.Integer.toString(Integer.java:935)
+					at Main.main(Main.java:13)
+			+ we can change the initialheapsize as well:
+				- normally, we can increase the initialheapsize, so our application will not require for more memory later on, and that mightm be a sligthly increase in performance:
+					+ considering our examlple:
+						-XX:InitialHeapSize=1g -XX:+PrintStringTableStatistics -XX:StringTableSize=120121
+						Elapsed:17218 ms. --> we gained 10 seconds 
+						Other syntax for initialheapsize is: -X:Xms1g
+

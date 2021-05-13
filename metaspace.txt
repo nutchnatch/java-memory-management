@@ -1,0 +1,34 @@
+* Mataspace
+	- java's memory is devided in three parts:
+		+ stack
+		+ heap
+		+ metaspace (since java 8)
+			-> used to store metadata
+				. classes, methods
+			-> used to store static variables (in a stack)
+				~ static primitives are store entirely in metaspace
+				~ static objects are store in the heap, but their object reference, or pointer is stored in metaspace
+			-> unlike stacke where variables can be poped off when they get out of scope, variables in metaspace are permanently there
+				. that is why static variables never reach the state when they can no longer be referenced
+				. objects on the heap with a reference on the metaspace, will never be garbage collected
+			-> all classes and threads has access to the metaspace, so static variables are available everywhere
+
+*  PermGem - used for Java 7 and lower versions (instead of Metaspace)
+	- Usualy, the following exception was raised in Java7:
+		java.lang.OutOfMemoryError: PermGem
+		+ to solve this problem, the solution was to increase the permgem memory with flags like:
+			-XX:PermSize=N
+			-XX:MaxPermSize=N
+			- Anyway, those flags are no longer valid
+
+- In C++ or other languages, we can choose if we want to put objects in the stack or in the heap
+- Instead, this option does not exist in Java, all objets are created in the heap
+
+* String pool
+	String one = "Hello";
+	String two = "Hello";
+
+	System.out.println(one.equals(two));
+	System.out.println(one == two);
+
+	As String is immutable, in this case all the comparisions will return true, because in this case JavaVM uses only one od the object for both String.
