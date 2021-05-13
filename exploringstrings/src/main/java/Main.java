@@ -14,6 +14,7 @@ public class Main {
             strings.add(s);
         }
 
+
         Date end = new Date();
         System.out.println("Elapsed:" + (end.getTime() - start.getTime()) + " ms.");
     }
