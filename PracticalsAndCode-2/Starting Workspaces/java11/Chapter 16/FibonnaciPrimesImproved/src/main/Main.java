@@ -3,8 +3,11 @@ package main;
 public class Main {
 
 	public static void main(String[] args) throws InterruptedException {
-		int target = 100;
-		
+//		int target = 100;
+		int target = 8;
+
+		long start = System.currentTimeMillis();
+
 		PrimeNumbersTask primeNumbersTask = new PrimeNumbersTask();
 		Thread primesGeneratorThread = new Thread(primeNumbersTask);
 		primesGeneratorThread.start();
@@ -43,6 +46,9 @@ public class Main {
 		}
 		System.out.println("Job done  - found " + combined + ".");
 		if (combined > 0) combinedNumbersTask.printCombinedNumbers();
+
+		long end = System.currentTimeMillis();
+		System.out.println("Time taken: " + (end - start) + " ms");
 	}
 
 }

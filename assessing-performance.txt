@@ -1,0 +1,39 @@
+* Measuring performance time
+	- problems:
+		-> measuring start and end time is not a great way to measure an application, since we know that are code that are natively compiled and is run faster
+			. to avoid this, we can turn off the native compilation with the following flag:
+				-XX:-TieredCompilation
+			. indeed, we want to leave that native compilation. Since we know that JVM knows which methods it put into native compilatio after running the code, we can run our code, before starting measuring
+			. we can add the print compilation flag on VM options
+				-XX:+PrintCompilation
+			.output:
+				    200   33       4       NumberChecker::isPrime (58 bytes)
+				    200   32       4       java.lang.Integer::valueOf (32 bytes)
+				    202   26       2       java.lang.Integer::valueOf (32 bytes)   made not entrant
+				    203   29       3       NumberChecker::isPrime (58 bytes)   made not entrant
+				Warm up finished; now measuring!
+				    259   34       3       java.lang.String::lastIndexOf (13 bytes)
+				Time taken: 2 ms
+				    259   35       3       java.lang.String::indexOf (7 bytes)
+			. run the measuring multiple times to compare results
+			. running another version of the same code, we see that compilation is still being done when we are measuring
+			. we can lower the compile threashold:
+				-XX:CompileThreshold=1000 (its default value is 10000)
+			. we can also put a pause, to be sure that the warmup is definetly finished
+			. output:
+				Warm up finished; now measuring!
+			   2118   77       1       java.nio.Buffer::position (5 bytes)
+			   2118   78       4       NumberChecker::isPrime2 (36 bytes)
+			   2120   29       2       NumberChecker::isPrime2 (36 bytes)   made not entrant
+			Time taken: 7 ms   -> we see that performance improved
+
+		-> what if garbage collection akes place while performance measurement is running?
+
+	+ micro-benchmark - measuring the performance of a small piece of code
+		- complications:
+			. assessing in isolation
+				- might be complicated to measure, if our application is running in a concurrent context
+				- different hardware comparing running locally vs prod
+		- this kind of measurement is recommended to be run after deployng the application and realizes that we have a performance issue, and we may have alternatives for it
+
+	+ macro-benchmark - measuring the changed code when the hole application is running and not in isolating mode

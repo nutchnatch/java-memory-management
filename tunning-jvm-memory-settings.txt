@@ -1,4 +1,5 @@
 * Stringpool
+	- Sometimes JVM does not create objects, because of the use of StringPools, if finds that there are matching string equal to the one it wants to create
 	- Implement by using a HashMap
 		+ a standard hashmao starts with 16 buckets, but it grows overtime
 		+ when using the following VM options 

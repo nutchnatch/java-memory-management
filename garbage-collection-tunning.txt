@@ -1,0 +1,63 @@
+* Garbage collectors
+	- several algorithms that java can use as garbage collection
+		. JVM choose the best algorithm based on the hardware
+		. this can be changed and we can tell JVM which GC we want to use:
+		. we can monitor how ofetn GC is taking place in our application
+			-> use the following argument:
+				-verbose:gc
+			-> GC is a minor garbage collection in young generation
+			-> Full GC is a full gc in old generation
+
+		. get the precise idea of our running application:
+			> jps from jdk bin dir:
+			Nivaldos-MBP:~ nivaldomonteiro$ /Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/bin/jps ; exit;
+			59136 Launcher
+			33232 Main
+			59137 Main
+			59992 Jps
+			41882 
+			logout
+		. find the value of flag (to understand if it is set by default):
+			from jdk bin dir:
+			> jinfo -flag UseAdaptiveSizePolicy 59137
+				-XX:+UseAdaptiveSizePolicy
+				this means that the flag (JVM uses that flag to dinamyally change the size of our different sections of the heap, at runtime) is set by default
+
+		. to minimyze the full gc, we can use three flags:
+			- allocate most of our memory for the young generation and less for the old generation
+		. tunning GC configuration
+			-XX:NewRatio=n 	-> how mamy time bigger shoud the old generationbe compared to the young generation
+			. to check how is ths configuration set (in jkd bin dir):
+				$ jinfo -flag NewRatio 59137
+				-XX:NewRatio=2 -> it means old gen is 2 times bigger than old gen
+			-XX:SurvivorRatio=n  -> how much of the young generation should be taken by S zero and S one spaces, in the young generation
+				Nivaldos-MBP:bin nivaldomonteiro$ jinfo -flag SurvivorRatio 66282
+				-XX:SurvivorRatio=8 -> this means that S one and S zero should be 1/8 of the young generation
+				We can set those values, anyway the JVM can change them addapt them dynalicaly
+
+			-XX:MaxTenuringThreshold=n  -> how many generation shold an object survives before it becomes part of the old generation
+				. we want it to be as high as possible, we want the objects to live in the young generation as long as possible
+				. this number cannot be higher than 15, it becomes inefficient. Above this value (16) means that you want to use only young generation and not old generation. That is a bad idea, and we cannot follow it
+
+	- Select a Garbage Collector:
+		+ JVM has three types of collectors called:
+			- serial - uses a single thread to perform all the gc work (remember that when it takes place, your application is paused). It can be used when our application is not to be performant and its priority is not bigger than other applications running in the same machine
+				. to use it, we have the flag -XX:+UseSerialGC
+			- parallel - performs minor collection in young generation, in parallel (multithreading)
+				. the flag is -XX:+UseParallelGC
+			- mostly concurrent - most of its work id don concurrently (almost real time gc) - the application is not pause while collection process is running. But, it is not what happens, it pauses the application when marking objects, and resumes it when the sweep phase takes place.
+				+ there are two of those collectors:
+					- Mark Sweep collector - the flag is: -XX:UseConcMarkSweepGC (this is the default in java 9)
+					- G1 collector - the flag is: -XX:+UseG1GC (default in java 10)
+
+	- G1 garbage collector:
+		- for a minor gc, it identifies what is in Eden, S zero, S one and run the work, than it decides how to reorganize the memory between those spaces, in order to get better efficency
+		- when it runs a full gc in old generation, gc will work out for each region of the old generation, to see which regions is to garbage and it will collect the garbage from those regions first. That is why it is called G1 (garbage first collector)
+			. It does not look to the entire old generation, it preffer to clear a few regions than running a full gc on the entire old generation, which is not necessary
+			. Because of this, it is considered better than the other gc
+			. Beyond this, it can resize and reallocate different areas of the heap to different parts of the young and old generation, to maximise performace.
+			. It must not be tuned in most of the circumstances
+			. flags:
+				-XX:ConcGCThreads=n -> number of concurrent threads available for these smaller regions collections. Usefull, when we want to limit the number of threads to not impact performance of other applications
+				-XX:InitiatingHeapOccupancyPercent=n -> the garbage first process starts when the heap reaches a certain level of fulness by default. Usualy, it happens when it is 45% full
+				-XX:StringDeDuplication (only available if using G1) -> allows gc to make more space if it finds duplicate string in the heap

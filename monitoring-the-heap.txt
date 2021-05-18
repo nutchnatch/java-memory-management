@@ -1,0 +1,25 @@
+* Memory Leaks
+	- they shouldn't be possible to occur in java, unless JVM is incoreclty implemented
+
+	. Sofet leak - when an object remains refferenced when no longer needed
+
+	- find jvisualvm in your jdk bin directory
+		/Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home/bin
+		execute it and run Idea (IDE) instance
+		+ we can visualize the heap graph of memory consumprion, so we can verify if GC is correclty cleaning unused objects, or if we have a memory leak in our application
+
+
+* Heap Dump
+	- Holds the information that is in the heap at any fixed point in time
+		+ for this, we can:
+			- go to visualvm and click a button to export the heap, and it export the file in a file:
+				File: /var/folders/rh/hnt3w59d5p182mmhhlcjb2n80000gn/T/visualvm.dat/localhost_537/heapdump-1621095368959.hprof
+				+ we can use the eclipse memory analyser tool (MAT) to analyse the heap file
+					https://www.eclipse.org/mat/
+					- in the alisys, we can see the following:
+					One instance of "main.CustomerManager" loaded by "sun.misc.Launcher$AppClassLoader @ 0x7bd6a6b48" occupies 38,205,120 (96.98%) bytes.
+					+ we can click in details to see more details about the logs
+
+			- run a command line argument on the JVM, to tell it every time the application craches with an out of memory error, at that point generate a heap dump (good option to run in a production server):
+				-XX:+HeapDumpOnOutOfMemoryError
+				-XX:HeapDumpPath=someFilePath

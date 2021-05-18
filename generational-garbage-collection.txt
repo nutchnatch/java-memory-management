@@ -1,0 +1,48 @@
+* Garbage Collection
+	- this process needs to be efficient
+	- because it occupoes the cpu while it is running
+	- it removed from the heap, the objects that are no longer reachable
+	- rather than searching for all the objects to remove, gc looks for all of the objects that need to be retained and rescue them
+	- the general algorithm used by gc, is called "Mark and Sweep"
+		+ this is two state process:
+			* Marking
+				- the program execution is first paused (called the stop the world event)
+				- looks to every references in the stack and in the metaspace if there are static variables
+				- objects found at the end of the references, are marked to be alive, and it follows any other references that object has, and mark those as being alive
+				- once all referenced objects are marked for keeping, a full scan of the heap takes place, and the memory occupied by the objects that have not been marked during the marking process can then be freed up
+				- the more garbage it is, the faster is the garbage collector
+			* Sweeping
+
+		+ GC is a stop the world event, application is paused while the "marking" runs. App may froze, this is not acceptable
+* Generational Garbage Collector
+	- to avoid this behavior, there is gerneratin garbagw collector
+	- most objects in java live for a very period of time
+	- if an object survives a garbage collector, it is more likely to live forever
+	- it is faster to run garbage collector, when there is a lot of garbage, or few objects going ro survive
+
+	+ for this, heap is separated in to two sections:
+		- young generation (usually called minor collection)
+			. usualy is smaller, but this can be changed
+			. new objects are created in the young generation space
+			. when it is full, garbage collector takes place
+			. since objects don't live too long, young generation will probably be garbaged, and the process should be very quick (young generation is small)
+			. any surviving objets are moved to old generation
+			. so gc never looks at the entire heap
+			. young generation is split into three sections, called Eden S zero, and Eden S one (they are called the survivor space)
+				. when an object is created, it is put in the Eden space
+				. when Eden space get full, gc will take place and survinving objects are moved to Eden S zero
+				. new objects are created, so gc looks at Eden space and S zero
+				. any surviving objects will be moved to S one, and so all objects are in S one, so Eden and S zero are empty
+				. the negative impact is that for a period of time, the memory dedicated for Eden and S zero will be unused
+				. when an object is moved from S zero to S one, or vice versa, this object is one generation older
+				. if an objects survives five (this number is configurable) minor gc (five generations), this object is determined to be long surviving and it will be moved from S one or S zero to thew old generation
+		- old generation (major collection)
+			. gc will run h+in the old, but only if it is really needed, for example if it gets full
+			. it is much slowe, since it is a bigger block of objects to sweep, and some of them may be still alive, so the marking process takes longer
+			. the compacting process of moving the surviving objects to a contiguous part, takes longer
+			. this poeration might give impact on the performance for the user
+
+		- using visualvm, we can breake it into generations
+		- for that, we have to install a plugin (tools -> plugins -> available plugins -> select Visual GC) and install it
+		- close and reopen connection
+		- see the Visual GC tab

@@ -9,6 +9,7 @@ public class CustomerManager {
 
 	private List<Customer> customers = new ArrayList<Customer>();
 	private int nextAvalailbleId = 0;
+	private int lasProcessedId = -1;
 	
 	public  void addCustomer(Customer customer) {
 		synchronized (this) {
@@ -22,11 +23,15 @@ public class CustomerManager {
 	}
 
 	public Optional<Customer> getNextCustomer() {
-		synchronized(customers) {
-				if (customers.size() > 0) {
-					return Optional.of(customers.remove(0));
-				}
+		if(lasProcessedId + 1 > nextAvalailbleId) {
+			lasProcessedId ++;
+			return Optional.of(customers.get(lasProcessedId));
 		}
+//		synchronized(customers) {
+//				if (customers.size() > 0) {
+//					return Optional.of(customers.remove(0));
+//				}
+//		}
 		return Optional.empty();
 	}	
 

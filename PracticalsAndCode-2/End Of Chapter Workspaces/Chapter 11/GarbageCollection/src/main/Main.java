@@ -11,10 +11,11 @@ public class Main {
 		long availableBytes = runtime.freeMemory();
 		System.out.println("Available memory at start: " + availableBytes / 1024 + "k");
 
-		
+//		List<Customer> list = new ArrayList<>();
 		
 		for (int i=0; i<1000000; i++)
 		{
+//			list.add(new Customer("" +i));
 			Customer c = new Customer("Customer " + i);
 		}
 		

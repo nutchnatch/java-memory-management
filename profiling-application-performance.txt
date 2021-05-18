@@ -1,0 +1,32 @@
+* Profiler
+	- needed to understand deeply what is happening within JVM when our application is running
+	- it is a separate application which can connect to a running JVM and extract data
+	- itwill put extra demand in the JVM when the profiler is attached to the JVM
+		. because of this it can change the performance of the application
+
+	Java Mission Control
+		. to install, download the application in http://jdk.java.net/jmc/8/
+		. it is a opensource application which works only for java 7 or later
+		. run it, and connect to your application through MBeanServer
+		. in dashboard, click plus button and search for eden typing "*eden"
+		. expand it, and go to Usage, and open "used" to see how much of it is used
+		. it will add a new item for eden
+		. we can add eden to memory, following the same approach, clicking in plus button of memory
+		. in overview, we can add a new section and add whatever we want to measure, for example "*survivor"
+		. in MbeanBrowser tab, we can filter for "*eden" for example and see its configuration on the right side
+			- select Usage, right click on Used -> visualize and select the chart when we want to add it to
+		. system tab tell us about the machine hardware that we are working on
+		. in diaganotic commands, we see a lot of commands we can execute against the JVM, for example, select JVM.version, click execute and we will see the actual version of JVM
+
+		+ we can use flight recorder to record what is going on the application runtime, and later we can analyse the result 
+			. to use it, expand the FlightRecorder section, right click it and choose 'Start FLight Recording'
+			. to start flight recording from the command line, we can add the following:
+				-XX:StartFlightRecording=delay=2min, duration=60s, name=Test, filename=recording.jfr, settings=profile
+			. if using oraclejdk, we need to add 2 more flags:
+				-XX:+UnlockCommercialFeatures -XX:+FlightRecorder
+			. to dump the recording, we click over it and choose the desired dump option
+			. dump analisys:
+				- in threads, everu thread has its own color
+					. blue - means sleeping
+					. green - means everything is fine
+				- we can select a rang in time frame and zoom it to see more details

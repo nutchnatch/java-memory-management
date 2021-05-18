@@ -1,0 +1,16 @@
+* Garbage Collection
+	- In java, when you finoche using an object, you don't have to tell java it is no longer needed, JVM works it autometical
+		. this does not happen with other languages like C, C++, where you have to explicitly create code to destry that object
+			- In this case, the memory used for those objects will still be in use, if they are not cleared up. In this case, we would have to restart the PC
+				this type of fault, is called memory leak
+	- Any object on the heap that cannot be accessed by the stack (or from the metaspace), is elligible for garbage collection
+	- Garbage Collection is an automatic process which, a programmer does not have interfear with
+	-> System.gc() - can be used (as a suggestion) to free memory up
+	-> In java 11, there is an optimyzation that did not exist in hava 8:
+		. we can specify a maximum size of the heap, but JVM won't request that total amount from OS, but instead as long as the application requires more memory, it goes ask more memory from the OS
+		. in java 8 (or bellow), the amount of memory required in the biggining of the application can never go down, but in java 11, if that memory is not used anymore, JVM gives it back to the OS
+		. but, in java 11, if you set the initial heapsize, JVM does not let the memory go down that amount of memory
+			-Xms300m (300 megabytes)
+
+		finelize() method is usually used when an object is garbage collected, but it is dangerous to use it, because we do not know when and if that method will ever be called
+			. if we put code in the finalize() method, it can be dangerous, because it may prevent GC to execute, and hence it can be hung there and not able to cleanup 

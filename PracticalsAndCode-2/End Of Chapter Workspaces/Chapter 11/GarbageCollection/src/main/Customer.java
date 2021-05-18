@@ -28,8 +28,7 @@ public class Customer  {
 	public void finalize() {
 		System.out.println("This object is being g.c.'d " + name);
 		while(true) {
-			
+
 		}
 	}
-	
 }
