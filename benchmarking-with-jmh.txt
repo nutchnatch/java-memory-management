@@ -1,0 +1,23 @@
+* JMH - Java Microbenchmark Harness
+	- it is part of JDK
+	- it sets upt for us an environment to learn our code and measure its performance in a much powerful way
+	- it takes care of a warmup period, and analyzes the code, and analyse its performance
+	- it runs our code, potentially thousands of times to produce a summary of the output
+	- we don't have to keep running our code lots of times and avaraging the results, it does all of that for us
+
+	- code and intructions can be found here:
+		https://openjdk.java.net/projects/code-tools/jmh/
+		https://github.com/openjdk/jmh
+
+	- we will run our code with jmh and let it give the feedback about performance (usualy it takes a lot of time to perform the analisys)
+	- mvn clean install to run it:
+		* results:
+			Benchmark                    Mode  Cnt  Score   Error  Units
+			PrimeBenchmarking.version1  thrpt   25  1.668 ± 0.066  ops/s
+			PrimeBenchmarking.version2  thrpt   25  1.762 ± 0.034  ops/s
+			
+	- it will generate a jar that we can use to see other commands with help menu:
+		java -jar benchmarks.jar -h
+
+	- to see how long it takes to run:
+		java -jar benchmarks.jar -bm avgt

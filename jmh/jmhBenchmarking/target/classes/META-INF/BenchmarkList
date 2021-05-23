@@ -1,0 +1,2 @@
+JMH S 48 com.virtual.programmers.primes.PrimeBenchmarking S 79 com.virtual.programmers.primes.jmh_generated.PrimeBenchmarking_version1_jmhTest S 8 version1 S 10 Throughput E A 1 1 1 E E E E E E E E E E E E E E E E E 
+JMH S 48 com.virtual.programmers.primes.PrimeBenchmarking S 79 com.virtual.programmers.primes.jmh_generated.PrimeBenchmarking_version2_jmhTest S 8 version2 S 10 Throughput E A 1 1 1 E E E E E E E E E E E E E E E E E 

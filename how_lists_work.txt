@@ -1,0 +1,113 @@
+* Java Lists
+	- if we are iterating and changing the list at the same time, LinkedList will give a better performance
+	- types of lists:
+		+ ArrayList
+		+ CopyOnWriteList
+		+ LinkedList
+		+ AttributeList
+			-> child of ArrayList, extends ArrayList, used preferentialy with ManagedBean or MBean objects
+		+ RoleList
+			-> Extends ArrayList
+		+ RoleUnresolvedList
+			-> Extends ArrayList
+		+ Stack
+		+ Vector
+
+		* CopyOnWriteList
+			- thread safe version of the ArrayList class
+			- ordinarily too costly
+			- it is not strongly recommended to be used
+			- it can be use in the following cases:
+				+ multi-threaded application
+				+ multiple threads accessing the same list
+				+ lots of iterations / read
+				+ few writes / additions / deletions
+
+		* ArrayList
+			- based on an array, with seze 0, or initialized with a size
+			- if we create an arraylist of ten 10 elements
+			- when it gets filled, a new larged array list is create in memory
+				. data from the original array list is copied to the second array list, and the the next item can be added
+				. origina array list is then discarded, and referenced objects are gabrage collected
+			- each time the array list runs out of space, the size of the array list is increased
+				. a new array list is create, data is copied to it, and the old array is made availbe for garbage collection
+				. this resizing process can impact the performance of the application
+				. if we know the amount of data to be added to the list, we can create it upfront with the desired amount
+				. no resizing will be needed, until reaching this initial number
+		* Vector
+			- it exist since first version of java
+			- almost the same as an array list, and it exists mainly for backword compatibility with older versions of java
+			- unlike arraylist, vector is thread safe, but that come at a performance cust
+
+		* Stack
+			- child object of the vector, it exist since first version of java
+			- allows statioc operations, know like last-in first-out
+			- Interfaces Queue and Dequeue, also to the same
+			- LinkedList implements List, Queue and Dequeue interfaces
+			- Instead of using Stack, we can use LinkedList
+
+		* LinkedList
+			- there is no way to store the objects. Insterad, as each element is added to the list in memory, pointers at added to the previous and next element in the list to create an order with the items in the linkedlist
+			- there is no concept of size, we just add nodes to the existing ones
+
+		* Choose between LinkedList and ArrayList
+			- if we have to add a new element to a list, there is the performance issue of creating a new one and copying the existing to it
+			- with a linkedlist, there is no need for that, no performance issue
+			- it is very easy to get the last element of a LinkedList, because it saves a pointer to it
+			- so adding an elemnt to the end of a LinkedList is streight forward then
+			- adding an element to the ArrayList will be optimal, if there is no resizing to do
+			- adding an element to the LikedList will be a simple operation, because there is a pointer to the start of LinkedList
+			- adding an element to the start of an ArrayList, is a heavy operation, because all elements in the array must be shifted, so we can find room at the start 
+			- so, it will be better to use a LinkedList in such cases
+			- removing an item from a ArrayList, all the elements must be shifted down again, expensive opertion
+			- in a linked list, it would be faster, because we only have to change the pointer in either side of it, but this is quick only if we iterated to the otem first
+			- while in the list, we always know the position of the element, in a LinkedList we have to iterate until the position of the element
+
+		* HashMap
+			- it is created in memory, initially with an array with an initial capacity of 16 elements
+			- if we use a string for the key, it will be converted to an integer
+			- to create the key, it uses the module of the int element by the size of the array: 124 % 16 = 12
+			- in this case the element will be stored in bucket number 12
+			- the buckets are numbered from zero to 50
+			- if the key is a string, we get the hashcode of the string. Then we get the module of the hash by the size: 675377748 % 16 = 4  -> the bucket
+			- each bucket contains a linked list of objects
+			- after identifying the bucket, the element is added at the end of the LinkedList
+			- hashmap has a factor, which has a default value 0.75
+				. when this value is reached, hashmap is considered to be full, and a resize takes place (it doubles its size)
+				. when this happens, all the elements must be revaluated. Since the size now is 32, we need to devide the hashcode by 32, in order to find the bucket number
+				. this operation has a significant overhead, and causes performance issues
+				. this factor and the initial size of the hashmap can be specified in the biggining
+			- the size of the array will always be a power of two. new HashMap<>(500000, 0.6f) - gives a hashmap with, at least 500000 items
+			- if we use objects as keys, if all the hashcodes are the same, then we will never resize our hasmap, all elements will be added to the same LinkedList
+				. all other buckets will be empty, and never resizes, and the performance will be very poor
+
+			. HashCode
+				- with a number of different objects, we should get a good range of objects, in order tho spread those objects to different buckets
+				- equal objects, must have equal hashcode 
+					. to calculate the hashcode, we can start by using a prime number: 31.
+					. then we can use just the id and leave the other fields, to use a simple hash map, because of performance issues
+
+		* LinkedHashMap
+			- the main difference when comparing with a hashmap, is that when we iterate over the hashmap, results are returned in a random order
+			- when using a linkedHashMap, the order will be the insert order
+				. the performance impact, is that this LinkedHashMap will take more memory space than a regular hashmap
+			- time used to retrieve an element, will be the same for both
+			- LinkedHashMap extends the HashMap
+				. the extra part, is the way how the iteration os done, and that is achieved using a double LinkedList
+
+		* HashTable 
+			- is a older version, since java 1.0, and is lively relationship between the vector and the array list
+			- it is a thread safe option for a hash map
+			- if you are not under a multithreaded environment, use the hashmap, which gives a better performance than the hashtable
+			- in a multithreaded environment, test a synchronized hashmap vs a hashtable to compare performance
+
+		* TreeMap
+			- identical to the LinkedHashMap
+			- instead of the insert order sorting, it sort the elements in natural order of the keys
+			- it gives worse performance than hashmap or linked hashmaps
+			- might be useful if the amount of data is small
+
+
+
+
+

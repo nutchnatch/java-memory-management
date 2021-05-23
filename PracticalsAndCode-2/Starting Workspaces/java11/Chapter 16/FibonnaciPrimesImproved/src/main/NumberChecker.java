@@ -2,7 +2,14 @@ package main;
 
 public class NumberChecker {
 
-	public Boolean isPrime(Integer testNumber) {
+    public Boolean isPrime1(Integer testNumber) {
+        for (int i = 2; i < testNumber; i++) {
+            if (testNumber % i == 0) return false;
+        }
+        return true;
+    }
+
+	public Boolean isPrime2(int testNumber) {
 		final int maxToCheck = (int)Math.sqrt(testNumber);
 		for (int i = 2; i < maxToCheck; i++) {
 			if (testNumber % i == 0) return false;
